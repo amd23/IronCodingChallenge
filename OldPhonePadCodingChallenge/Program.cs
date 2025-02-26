@@ -15,17 +15,20 @@ namespace OldPhonePadCodingChallenge
                 Console.Write("Input: ");
                 string input = Console.ReadLine()?.Trim();
 
+                // Validate that input is not empty
                 if (string.IsNullOrWhiteSpace(input))
                 {
                     Console.WriteLine("Invalid input: Cannot be empty.");
                     continue;
                 }
 
+                // Process the input using the OldPhonePad method
                 string result = OldPhonePad(input);
                 Console.WriteLine($"Output: {result}");
             }
         }
 
+        // Dictionary mapping keypad digits to corresponding letter groups
         private static readonly Dictionary<char, string> KeyPadMapping = new Dictionary<char, string>
         {
             { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" },
@@ -35,6 +38,7 @@ namespace OldPhonePadCodingChallenge
 
         public static string OldPhonePad(string input)
         {
+            // Ensure the input ends with #
             if (!input.EndsWith("#"))
                 return "Invalid input: Must end with '#'";
 
@@ -43,12 +47,15 @@ namespace OldPhonePadCodingChallenge
 
             while (currentIndex < input.Length)
             {
-                char current = input[currentIndex];
+                char currentChar = input[currentIndex];
 
-                if (current == '#')
+
+                // End processing when # is encountered
+                if (currentChar == '#')
                     break;
 
-                if (current == '*')
+                // Handle backspace by removinh the last added character if available
+                if (currentChar == '*')
                 {
                     if (output.Length > 0)
                         output.Length--;
@@ -56,19 +63,22 @@ namespace OldPhonePadCodingChallenge
                     continue;
                 }
 
-                if (char.IsDigit(current) && KeyPadMapping.ContainsKey(current))
+                if (char.IsDigit(currentChar) && KeyPadMapping.ContainsKey(currentChar))
                 {
+                    // Count how many times the key is pressed
                     int count = 1;
-                    while (currentIndex + 1 < input.Length && input[currentIndex + 1] == current)
+                    while (currentIndex + 1 < input.Length && input[currentIndex + 1] == currentChar)
                     {
                         count++;
                         currentIndex++;
                     }
-                    output.Append(KeyPadMapping[current][(count - 1) % KeyPadMapping[current].Length]);
+                    // Determine the correct letter by using modulo on press count
+                    output.Append(KeyPadMapping[currentChar][(count - 1) % KeyPadMapping[currentChar].Length]);
                 }
-                else if (current != ' ')
+                else if (currentChar != ' ')
                 {
-                    return $"Invalid input: '{current}' is not allowed.";
+                    // If an invalid character is found return an error message
+                    return $"Invalid input: '{currentChar}' is not allowed.";
                 }
 
                 currentIndex++;
