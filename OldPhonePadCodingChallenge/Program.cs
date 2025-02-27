@@ -4,7 +4,7 @@ using System.Text;
 
 namespace OldPhonePadCodingChallenge
 {
-    class Program
+    public class Program
     {
         static void Main()
         {
@@ -31,9 +31,14 @@ namespace OldPhonePadCodingChallenge
         // Dictionary mapping keypad digits to corresponding letter groups
         private static readonly Dictionary<char, string> KeyPadMapping = new Dictionary<char, string>
         {
-            { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" },
-            { '5', "JKL" }, { '6', "MNO" }, { '7', "PQRS" },
-            { '8', "TUV" }, { '9', "WXYZ" }
+            { '2', "ABC" },
+            { '3', "DEF" },
+            { '4', "GHI" },
+            { '5', "JKL" },
+            { '6', "MNO" },
+            { '7', "PQRS"},
+            { '8', "TUV" },
+            { '9', "WXYZ" }
         };
 
         public static string OldPhonePad(string input)
