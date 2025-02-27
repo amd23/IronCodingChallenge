@@ -11,7 +11,7 @@ This project simulates text input using an old mobile phone, where multiple keyp
 ## Setup & Installation
 ### 1. Clone the Repository
 ```sh
-git clone https://github.com/IronCodingChallenge/OldPhonePadCodingChallenge.git
+git clone https://github.com/amd23/IronCodingChallenge.git
 cd OldPhonePadCodingChallenge
 ```
 ### 2. Open in Visual Studio
