@@ -11,5 +11,38 @@ This project simulates text input using an old mobile phone, where multiple keyp
 ## Setup & Installation
 ### 1. Clone the Repository
 ```sh
-git clone https://github.com/your-repository/OldPhonePadCodingChallenge.git
+git clone https://github.com/IronCodingChallenge/OldPhonePadCodingChallenge.git
 cd OldPhonePadCodingChallenge
+```
+### 2. Open in Visual Studio
+- Open `OldPhonePadCodingChallenge.sln` in Visual Studio.
+- Ensure the project targets **.NET Framework 4.8**.
+
+### 3. Install Dependencies
+Open **NuGet Package Manager** for the test project and install:
+```sh
+Install-Package NUnit
+Install-Package NUnit3TestAdapter
+```
+---
+
+## Running the Application
+- Run the **OldPhonePadCodingChallenge** project.
+- Enter an input string ending with `#`.
+- The program will process and display the corresponding text.
+
+---
+
+## Unit Testing
+
+### Running Tests
+- Open **Test Explorer** in Visual Studio.
+- Click **Run All** to execute all tests.
+
+---
+
+## Contributing
+Contributions are welcome! Feel free to:
+- Open issues for **bug reports** or **feature requests**.
+- Submit **pull requests** with improvements.
+
