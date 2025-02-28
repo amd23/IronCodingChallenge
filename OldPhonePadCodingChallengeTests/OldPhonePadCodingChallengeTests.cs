@@ -96,11 +96,10 @@ namespace OldPhonePadTestsNet48
         }
 
         [Test]
-        public void InvalidInputWithoutHashAtTheEnd_ShouldReturnErrorMessage()
+        public void InvalidInputWithoutHashAtTheEnd_ShouldReturnFalse()
         {
             string input = "222";
-            string expected = "Invalid input: Must end with '#'.";
-            Assert.AreEqual(expected, Program.OldPhonePad(input));
+            Assert.IsFalse(Program.IsValidInputFormat(input));
         }
 
         [Test]
