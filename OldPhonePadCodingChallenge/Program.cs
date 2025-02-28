@@ -8,23 +8,23 @@ namespace OldPhonePadCodingChallenge
     {
         static void Main()
         {
-            Console.WriteLine("Enter your input and it must end with '#':");
+            Console.WriteLine("Enter your input and it must end with '#': ");
 
             while (true)
             {
                 Console.Write("Input: ");
-                string input = Console.ReadLine()?.Trim();
+                string userInput = Console.ReadLine()?.Trim();
 
                 // Validate that input is not empty
-                if (string.IsNullOrWhiteSpace(input))
+                if (string.IsNullOrWhiteSpace(userInput))
                 {
                     Console.WriteLine("Invalid input: Cannot be empty.");
                     continue;
                 }
 
                 // Process the input using the OldPhonePad method
-                string result = OldPhonePad(input);
-                Console.WriteLine($"Output: {result}");
+                string decodedMessage = OldPhonePad(userInput);
+                Console.WriteLine($"Output: {decodedMessage}");
             }
         }
 
@@ -36,59 +36,69 @@ namespace OldPhonePadCodingChallenge
             { '4', "GHI" },
             { '5', "JKL" },
             { '6', "MNO" },
-            { '7', "PQRS"},
+            { '7', "PQRS" },
             { '8', "TUV" },
             { '9', "WXYZ" }
         };
 
+        /// <summary>
+        /// Converts an old phone keypad input into a readable text output.
+        /// </summary>
+        /// <param name="input">The input string representing key presses.</param>
+        /// <returns>The decoded text message.</returns>
         public static string OldPhonePad(string input)
         {
-            // Ensure the input ends with #
+            // Ensure the input ends with '#'
             if (!input.EndsWith("#"))
                 return "Invalid input: Must end with '#'.";
 
-            StringBuilder output = new StringBuilder();
-            int currentIndex = 0;
+            StringBuilder decodedText = new StringBuilder();
+            int currentPosition = 0;
 
-            while (currentIndex < input.Length)
+            while (currentPosition < input.Length)
             {
-                char currentChar = input[currentIndex];
+                char currentKey = input[currentPosition];
 
-
-                // End processing when # is encountered
-                if (currentChar == '#')
+                // Stop processing when '#' is encountered
+                if (currentKey == '#')
                     break;
 
-                // Handle backspace by removinh the last added character if available
-                if (currentChar == '*')
+                // Handle backspace '*' by removing the last added character if its available
+                if (currentKey == '*')
                 {
-                    if (output.Length > 0)
-                        output.Length--;
-                    currentIndex++;
+                    if (decodedText.Length > 0)
+                        decodedText.Length--; // Remove last character
+                    currentPosition++;
                     continue;
                 }
 
-                if (char.IsDigit(currentChar) && KeyPadMapping.ContainsKey(currentChar))
+                // Check if the key is a valid digit (2-9)
+                if (char.IsDigit(currentKey) && KeyPadMapping.ContainsKey(currentKey))
                 {
-                    // Count how many times the key is pressed
-                    int count = 1;
-                    while (currentIndex + 1 < input.Length && input[currentIndex + 1] == currentChar)
+                    int pressCount = 1; // Count consecutive key presses
+
+                    // Count how many times the key is pressed consecutively
+                    while (currentPosition + 1 < input.Length && input[currentPosition + 1] == currentKey)
                     {
-                        count++;
-                        currentIndex++;
+                        pressCount++;
+                        currentPosition++;
                     }
-                    // Determine the correct letter by using modulo on press count
-                    output.Append(KeyPadMapping[currentChar][(count - 1) % KeyPadMapping[currentChar].Length]);
+
+                    // Determine the corresponding letter using modulo logic
+                    string keyMapping = KeyPadMapping[currentKey];
+                    char selectedCharacter = keyMapping[(pressCount - 1) % keyMapping.Length];
+
+                    decodedText.Append(selectedCharacter);
                 }
-                else if (currentChar != ' ')
+                else if (currentKey != ' ') // Ignore spaces, but flag invalid characters
                 {
-                    // If an invalid character is found return an error message
-                    return $"Invalid input: '{currentChar}' is not a valid character.";
+                    return $"Invalid input: '{currentKey}' is not a valid character.";
                 }
 
-                currentIndex++;
+                currentPosition++;
             }
-            return output.ToString();
+
+            return decodedText.ToString();
         }
     }
 }
