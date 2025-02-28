@@ -1,65 +1,114 @@
-using NUnit.Framework;
 using OldPhonePadCodingChallenge;
+using NUnit.Framework;
 
 namespace OldPhonePadTestsNet48
 {
     [TestFixture]
     public class PhonePadTests
     {
+
+        [Test]
+        public void InvalidInputWithZero_ShouldReturnErrorMessage()
+        {
+            string input = "0#";
+            string expected = "Invalid input: '0' is not a valid character.";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
+        }
+
+        [Test]
+        public void InvalidInputWithOne_ShouldReturnErrorMessage()
+        {
+            string input = "1#";
+            string expected = "Invalid input: '1' is not a valid character.";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
+        }
+
+        [Test]
+        public void InvalidInputWithSpecialCharacters_ShouldReturnErrorMessage()
+        {
+            string input = "@#";
+            string expected = "Invalid input: '@' is not a valid character.";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
+        }
+
+        [Test]
+        public void ValidInputLongSequence_ShouldReturnCorrectText()
+        {
+            string input = "7777777777#";
+            string expected = "Q";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
+        }
+
+        [Test]
+        public void InvalidInputWithMixedInvalidCharacters_ShouldReturnErrorMessage()
+        {
+            string input = "22A*3#";
+            string expected = "Invalid input: 'A' is not a valid character.";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
+        }
+
+        [Test]
+        public void ValidInputWithMultipleBackspaces_ShouldReturnCorrectText()
+        {
+            string input = "7777***7#";
+            string expected = "P";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
+        }
+
         [Test]
         public void ValidInput_ShouldReturnCorrectText()
         {
             string input = "222 2 22#";
-            string result = Program.OldPhonePad(input);
-            Assert.AreEqual("CAB", result);
+            string expected = "CAB";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
         }
 
         [Test]
-        public void InputWithBackspace_ShouldRemovePreviousCharacter()
+        public void ValidInputWithBackspace_ShouldRemovePreviousCharacter()
         {
             string input = "227*#";
-            string result = Program.OldPhonePad(input);
-            Assert.AreEqual("B", result);
+            string expected = "B";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
         }
 
         [Test]
-        public void InputWithMultiplePresses_ShouldGetToCorrectLetter()
+        public void ValidInputWithMultiplePresses_ShouldGetToCorrectLetter()
         {
             string input = "33#";
-            string result = Program.OldPhonePad(input);
-            Assert.AreEqual("E", result);
+            string expected = "E";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
         }
 
         [Test]
         public void ValidInput_ShouldReturnCorrectTextWord1()
         {
             string input = "4433555 555666#";
-            string result = Program.OldPhonePad(input);
-            Assert.AreEqual("HELLO", result);
+            string expected = "HELLO";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
         }
 
         [Test]
         public void ValidInput_ShouldReturnCorrectTextWord2()
         {
             string input = "8 88777444666*664#";
-            string result = Program.OldPhonePad(input);
-            Assert.AreEqual("TURING", result);
+            string expected = "TURING";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
         }
 
         [Test]
-        public void InputWithoutHashAtTheEnd_ShouldReturnError()
+        public void InvalidInputWithoutHashAtTheEnd_ShouldReturnErrorMessage()
         {
             string input = "222";
-            string result = Program.OldPhonePad(input);
-            Assert.AreEqual("Invalid input: Must end with '#'", result);
+            string expected = "Invalid input: Must end with '#'.";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
         }
 
         [Test]
-        public void InputWithInvalidCharacters_ShouldReturnError()
+        public void InvalidInputWithInvalidCharacters_ShouldReturnErrorMessage()
         {
             string input = "22A#";
-            string result = Program.OldPhonePad(input);
-            Assert.AreEqual("Invalid input: 'A' is not allowed.", result);
+            string expected = "Invalid input: 'A' is not a valid character.";
+            Assert.AreEqual(expected, Program.OldPhonePad(input));
         }
     }
 }

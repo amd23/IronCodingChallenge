@@ -45,7 +45,7 @@ namespace OldPhonePadCodingChallenge
         {
             // Ensure the input ends with #
             if (!input.EndsWith("#"))
-                return "Invalid input: Must end with '#'";
+                return "Invalid input: Must end with '#'.";
 
             StringBuilder output = new StringBuilder();
             int currentIndex = 0;
@@ -83,7 +83,7 @@ namespace OldPhonePadCodingChallenge
                 else if (currentChar != ' ')
                 {
                     // If an invalid character is found return an error message
-                    return $"Invalid input: '{currentChar}' is not allowed.";
+                    return $"Invalid input: '{currentChar}' is not a valid character.";
                 }
 
                 currentIndex++;
