@@ -6,8 +6,41 @@ namespace OldPhonePadCodingChallenge
 {
     public class Program
     {
+        // Dictionary holding multiple language mappings
+        private static readonly Dictionary<string, Dictionary<char, string>> LanguageMappings = new Dictionary<string, Dictionary<char, string>>
+        {
+            { "English", new Dictionary<char, string>
+                {
+                    { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" }, { '5', "JKL" },
+                    { '6', "MNO" }, { '7', "PQRS" }, { '8', "TUV" }, { '9', "WXYZ" }
+                }
+            },
+            { "Spanish", new Dictionary<char, string>
+                {
+                    { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" }, { '5', "JKL" },
+                    { '6', "MNO" }, { '7', "PQRSÑ" }, { '8', "TUV" }, { '9', "WXYZ" }
+                }
+            },
+            { "French", new Dictionary<char, string>
+                {
+                    { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" }, { '5', "JKL" },
+                    { '6', "MNO" }, { '7', "PQRS" }, { '8', "TUV" }, { '9', "WXYZÉÈÊË" }
+                }
+            }
+        };
+
         static void Main()
         {
+            Console.WriteLine("Select language (English, Spanish, French): ");
+            string language = Console.ReadLine()?.Trim();
+
+            // Validate language selection
+            if (!LanguageMappings.ContainsKey(language))
+            {
+                Console.WriteLine("Invalid language selection. Defaulting to English.");
+                language = "English";
+            }
+
             Console.WriteLine("Enter your input (must end with '#'):");
 
             while (true)
@@ -22,49 +55,47 @@ namespace OldPhonePadCodingChallenge
                     continue;
                 }
 
-                // Process and display the result
-                string decodedMessage = ConvertOldPhonePadInput(userInput);
+                // Process and display the result using the selected language
+                string decodedMessage = ConvertOldPhonePadInput(userInput, language);
                 Console.WriteLine($"Output: {decodedMessage}");
             }
         }
 
-        // Dictionary mapping keypad digits to corresponding letter groups
-        private static readonly Dictionary<char, string> KeyPadMapping = new Dictionary<char, string>
-        {
-            { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" }, { '5', "JKL" },
-            { '6', "MNO" }, { '7', "PQRS" }, { '8', "TUV" }, { '9', "WXYZ" }
-        };
-
         /// <summary>
-        /// Validates whether the input format is correct.
+        /// Checks if the input is valid.
         /// Input must not be empty and must end with '#'.
         /// </summary>
-        /// <param name="input">User input string</param>
-        /// <returns>True if input is valid, otherwise false</returns>
+        /// <param name="input">User input string.</param>
+        /// <returns>True if valid, otherwise false.</returns>
         public static bool IsValidInputFormat(string input)
         {
             return !string.IsNullOrWhiteSpace(input) && input.EndsWith("#");
         }
 
         /// <summary>
-        /// Converts old phone keypad input to readable text by calling OldPhonePad method.
+        /// Converts an old phone keypad input to readable text.
+        /// This method ensures input validation and calls the decoding function.
         /// </summary>
-        /// <param name="input">User input string</param>
-        /// <returns>Decoded message</returns>
-        public static string ConvertOldPhonePadInput(string input)
+        /// <param name="input">User input string.</param>
+        /// <param name="language">The selected language.</param>
+        /// <returns>Decoded text from keypad input.</returns>
+        public static string ConvertOldPhonePadInput(string input, string language)
         {
-            return OldPhonePad(input);
+            return OldPhonePad(input, language);
         }
 
         /// <summary>
-        /// Processes the key presses and returns the decoded string.
+        /// Decodes the input sequence into text using the selected language's keypad mapping.
+        /// Supports backspace ('*') and ensures correct character selection based on key presses.
         /// </summary>
-        /// <param name="input">User input string</param>
-        /// <returns>Decoded text from old phone keypad input</returns>
-        public static string OldPhonePad(string input)
+        /// <param name="input">User input string.</param>
+        /// <param name="language">The selected language.</param>
+        /// <returns>The decoded text message.</returns>
+        public static string OldPhonePad(string input, string language)
         {
             StringBuilder decodedText = new StringBuilder();
             int length = input.Length;
+            var keypadMapping = LanguageMappings[language]; // Get selected language mapping
 
             for (int i = 0; i < length; i++)
             {
@@ -83,7 +114,7 @@ namespace OldPhonePadCodingChallenge
                 }
 
                 // Check if the key is a valid digit in the keypad mapping
-                if (KeyPadMapping.ContainsKey(key))
+                if (keypadMapping.ContainsKey(key))
                 {
                     int pressCount = 1;
 
@@ -95,7 +126,7 @@ namespace OldPhonePadCodingChallenge
                     }
 
                     // Get the corresponding letter using modulo logic
-                    string mappedLetters = KeyPadMapping[key];
+                    string mappedLetters = keypadMapping[key];
                     char selectedCharacter = mappedLetters[(pressCount - 1) % mappedLetters.Length];
 
                     // Append the selected letter to the output
