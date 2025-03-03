@@ -6,96 +6,137 @@ namespace OldPhonePadCodingChallenge
 {
     public class Program
     {
+        // Dictionary holding multiple language mappings
+        private static readonly Dictionary<string, Dictionary<char, string>> LanguageMappings = new Dictionary<string, Dictionary<char, string>>
+        {
+            { "English", new Dictionary<char, string>
+                {
+                    { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" }, { '5', "JKL" },
+                    { '6', "MNO" }, { '7', "PQRS" }, { '8', "TUV" }, { '9', "WXYZ" }
+                }
+            },
+            { "Spanish", new Dictionary<char, string>
+                {
+                    { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" }, { '5', "JKL" },
+                    { '6', "MNO" }, { '7', "PQRSÑ" }, { '8', "TUV" }, { '9', "WXYZ" }
+                }
+            },
+            { "French", new Dictionary<char, string>
+                {
+                    { '2', "ABC" }, { '3', "DEF" }, { '4', "GHI" }, { '5', "JKL" },
+                    { '6', "MNO" }, { '7', "PQRS" }, { '8', "TUV" }, { '9', "WXYZÉÈÊË" }
+                }
+            }
+        };
+
         static void Main()
         {
-            Console.WriteLine("Enter your input and it must end with '#': ");
+            Console.WriteLine("Select language (English, Spanish, French): ");
+            string language = Console.ReadLine()?.Trim();
+
+            // Validate language selection
+            if (!LanguageMappings.ContainsKey(language))
+            {
+                Console.WriteLine("Invalid language selection. Defaulting to English.");
+                language = "English";
+            }
+
+            Console.WriteLine("Enter your input (must end with '#'):");
 
             while (true)
             {
                 Console.Write("Input: ");
                 string userInput = Console.ReadLine()?.Trim();
 
-                // Validate that input is not empty
-                if (string.IsNullOrWhiteSpace(userInput))
+                // Validate input format
+                if (!IsValidInputFormat(userInput))
                 {
-                    Console.WriteLine("Invalid input: Cannot be empty.");
+                    Console.WriteLine("Invalid input: Must end with '#' and cannot be empty.");
                     continue;
                 }
 
-                // Process the input using the OldPhonePad method
-                string decodedMessage = OldPhonePad(userInput);
+                // Process and display the result using the selected language
+                string decodedMessage = ConvertOldPhonePadInput(userInput, language);
                 Console.WriteLine($"Output: {decodedMessage}");
             }
         }
 
-        // Dictionary mapping keypad digits to corresponding letter groups
-        private static readonly Dictionary<char, string> KeyPadMapping = new Dictionary<char, string>
+        /// <summary>
+        /// Checks if the input is valid.
+        /// Input must not be empty and must end with '#'.
+        /// </summary>
+        /// <param name="input">User input string.</param>
+        /// <returns>True if valid, otherwise false.</returns>
+        public static bool IsValidInputFormat(string input)
         {
-            { '2', "ABC" },
-            { '3', "DEF" },
-            { '4', "GHI" },
-            { '5', "JKL" },
-            { '6', "MNO" },
-            { '7', "PQRS" },
-            { '8', "TUV" },
-            { '9', "WXYZ" }
-        };
+            return !string.IsNullOrWhiteSpace(input) && input.EndsWith("#");
+        }
 
         /// <summary>
-        /// Converts an old phone keypad input into a readable text output.
+        /// Converts an old phone keypad input to readable text.
+        /// This method ensures input validation and calls the decoding function.
         /// </summary>
-        /// <param name="input">The input string representing key presses.</param>
-        /// <returns>The decoded text message.</returns>
-        public static string OldPhonePad(string input)
+        /// <param name="input">User input string.</param>
+        /// <param name="language">The selected language.</param>
+        /// <returns>Decoded text from keypad input.</returns>
+        public static string ConvertOldPhonePadInput(string input, string language)
         {
-            // Ensure the input ends with '#'
-            if (!input.EndsWith("#"))
-                return "Invalid input: Must end with '#'.";
+            return OldPhonePad(input, language);
+        }
 
+        /// <summary>
+        /// Decodes the input sequence into text using the selected language's keypad mapping.
+        /// Supports backspace ('*') and ensures correct character selection based on key presses.
+        /// </summary>
+        /// <param name="input">User input string.</param>
+        /// <param name="language">The selected language.</param>
+        /// <returns>The decoded text message.</returns>
+        public static string OldPhonePad(string input, string language)
+        {
             StringBuilder decodedText = new StringBuilder();
-            int currentPosition = 0;
+            int length = input.Length;
+            var keypadMapping = LanguageMappings[language]; // Get selected language mapping
 
-            while (currentPosition < input.Length)
+            for (int i = 0; i < length; i++)
             {
-                char currentKey = input[currentPosition];
+                char key = input[i];
 
-                // Stop processing when '#' is encountered
-                if (currentKey == '#')
+                // Stop processing if '#' is encountered (end of input)
+                if (key == '#')
                     break;
 
-                // Handle backspace '*' by removing the last added character if its available
-                if (currentKey == '*')
+                // Handle backspace ('*'): Remove last character if available
+                if (key == '*')
                 {
                     if (decodedText.Length > 0)
-                        decodedText.Length--; // Remove last character
-                    currentPosition++;
+                        decodedText.Length--; // Remove last added character
                     continue;
                 }
 
-                // Check if the key is a valid digit (2-9)
-                if (char.IsDigit(currentKey) && KeyPadMapping.ContainsKey(currentKey))
+                // Check if the key is a valid digit in the keypad mapping
+                if (keypadMapping.ContainsKey(key))
                 {
-                    int pressCount = 1; // Count consecutive key presses
+                    int pressCount = 1;
 
-                    // Count how many times the key is pressed consecutively
-                    while (currentPosition + 1 < input.Length && input[currentPosition + 1] == currentKey)
+                    // Count consecutive presses of the same key
+                    while (i + 1 < length && input[i + 1] == key)
                     {
                         pressCount++;
-                        currentPosition++;
+                        i++; // Move to the next character
                     }
 
-                    // Determine the corresponding letter using modulo logic
-                    string keyMapping = KeyPadMapping[currentKey];
-                    char selectedCharacter = keyMapping[(pressCount - 1) % keyMapping.Length];
+                    // Get the corresponding letter using modulo logic
+                    string mappedLetters = keypadMapping[key];
+                    char selectedCharacter = mappedLetters[(pressCount - 1) % mappedLetters.Length];
 
+                    // Append the selected letter to the output
                     decodedText.Append(selectedCharacter);
                 }
-                else if (currentKey != ' ') // Ignore spaces, but flag invalid characters
+                else if (key != ' ')
                 {
-                    return $"Invalid input: '{currentKey}' is not a valid character.";
+                    // If an invalid character is found, return an error message
+                    return $"Invalid input: '{key}' is not a valid character.";
                 }
-
-                currentPosition++;
             }
 
             return decodedText.ToString();
